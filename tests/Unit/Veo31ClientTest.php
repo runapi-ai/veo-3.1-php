@@ -55,6 +55,58 @@ final class Veo31ClientTest extends TestCase
         self::assertArrayNotHasKey('seed', $body);
     }
 
+    public function testCreateRejectsEmptyReferenceImagesBeforeSendingRequest(): void
+    {
+        $client = new Veo31Client(new ClientOptions(apiKey: 'k', httpClient: new QueueHttpClient([]), maxRetries: 0));
+
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage('reference_image_urls must contain between 1 and 3 items');
+
+        $client->textToVideo->create([
+            'model' => 'veo-3.1',
+            'input_mode' => 'reference',
+            'prompt' => 'A product render',
+            'reference_image_urls' => [],
+        ]);
+    }
+
+    public function testCreateAcceptsLiteReferenceRequest(): void
+    {
+        $transport = new QueueHttpClient([
+            new Response(200, [], '{"id":"task_lite"}'),
+        ]);
+        $client = new Veo31Client(new ClientOptions(apiKey: 'k', httpClient: $transport, maxRetries: 0));
+
+        $client->textToVideo->create([
+            'model' => 'veo-3.1-lite',
+            'prompt' => 'Keep the subject and composition',
+            'input_mode' => 'reference',
+            'aspect_ratio' => '16:9',
+            'duration_seconds' => 8,
+            'reference_image_urls' => ['https://cdn.runapi.ai/public/samples/image.jpg'],
+        ]);
+
+        $body = json_decode((string) $transport->requests[0]->getBody(), true, flags: JSON_THROW_ON_ERROR);
+        self::assertSame('veo-3.1-lite', $body['model']);
+    }
+
+    public function testCreateRejectsFourSecondLiteReferenceBeforeSendingRequest(): void
+    {
+        $client = new Veo31Client(new ClientOptions(apiKey: 'k', httpClient: new QueueHttpClient([]), maxRetries: 0));
+
+        $this->expectException(ValidationException::class);
+        $this->expectExceptionMessage('duration_seconds');
+
+        $client->textToVideo->create([
+            'model' => 'veo-3.1-lite',
+            'prompt' => 'Keep the subject and composition',
+            'input_mode' => 'reference',
+            'aspect_ratio' => '16:9',
+            'duration_seconds' => 4,
+            'reference_image_urls' => ['https://cdn.runapi.ai/public/samples/image.jpg'],
+        ]);
+    }
+
     public function testRunReturnsTypedCompletedResponseAndPreservesUnknownFields(): void
     {
         $transport = new QueueHttpClient([

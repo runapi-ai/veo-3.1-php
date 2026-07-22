@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace RunApi\Veo31\Resources;
 
+use RunApi\Core\Contract\ContractGen;
 use RunApi\Core\Http\HttpClient;
 use RunApi\Core\Models\TaskCreateResponse;
 use RunApi\Core\RequestOptions;
 use RunApi\Core\Resources\TypedConfiguredResource;
 use RunApi\Veo31\Models\CompletedVideoTaskResponse;
 use RunApi\Veo31\Models\VideoTaskResponse;
-use RunApi\Veo31\Types;
 
 /**
  * Generates video from a text prompt. Optionally set first_frame_image_url to animate from a starting image, or use input_mode "reference" with reference_image_urls for style/subject-guided generation.
@@ -82,7 +82,7 @@ readonly class TextToVideo extends TypedConfiguredResource
             'veo-3-1/text-to-video',
             VideoTaskResponse::class,
             CompletedVideoTaskResponse::class,
-            Types::TEXT_TO_VIDEO_MODELS,
+            ContractGen::contract()['veo-3-1/text-to-video']['models'],
             'text-to-video',
             VideoTaskResponse::class,
             CompletedVideoTaskResponse::class,

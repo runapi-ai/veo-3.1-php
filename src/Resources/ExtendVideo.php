@@ -13,7 +13,7 @@ use RunApi\Veo31\Models\VideoTaskResponse;
 use RunApi\Veo31\Types;
 
 /**
- * Appends additional footage to a previously generated video, continuing from where the source task left off. Requires the source_task_id of a completed TextToVideo or ExtendVideo task.
+ * Appends additional footage to a previously generated video, continuing from where the source task left off. Requires the source_task_id of a completed TextToVideo task.
  */
 readonly class ExtendVideo extends TypedConfiguredResource
 {
