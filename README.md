@@ -46,8 +46,8 @@ All SDK exceptions inherit from `RunApi\Core\Errors\RunApiException`, including 
 ## Links
 
 - Model page: https://runapi.ai/models/veo-3.1
-- SDK docs: https://runapi.ai/docs#sdk-veo-3.1
-- Product docs: https://runapi.ai/docs#veo-3.1
+- SDK docs: https://runapi.ai/docs/resources/sdks
+- Product docs: https://runapi.ai/docs/api/veo-3-1/text-to-video
 - Pricing and rate limits: https://runapi.ai/models/veo-3.1/veo-3.1
 - Full catalog: https://runapi.ai/models
 - GitHub repository: https://github.com/runapi-ai/veo-3.1-php
