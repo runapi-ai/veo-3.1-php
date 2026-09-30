@@ -10,7 +10,6 @@ use RunApi\Core\RequestOptions;
 use RunApi\Core\Resources\TypedConfiguredResource;
 use RunApi\Veo31\Models\CompletedVideoTaskResponse;
 use RunApi\Veo31\Models\VideoTaskResponse;
-use RunApi\Veo31\Types;
 
 /**
  * Appends additional footage to a previously generated video, continuing from where the source task left off. Requires the source_task_id of a completed TextToVideo task.
@@ -67,10 +66,8 @@ readonly class ExtendVideo extends TypedConfiguredResource
         return new self(
             $http,
             '/api/v1/veo_3_1/extend_video',
-            'veo-3-1/extend-video',
             VideoTaskResponse::class,
             CompletedVideoTaskResponse::class,
-            Types::EXTEND_VIDEO_MODELS,
             'extend-video',
             VideoTaskResponse::class,
             CompletedVideoTaskResponse::class,

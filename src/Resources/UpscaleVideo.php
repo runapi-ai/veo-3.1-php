@@ -10,7 +10,6 @@ use RunApi\Core\RequestOptions;
 use RunApi\Core\Resources\TypedConfiguredResource;
 use RunApi\Veo31\Models\CompletedVideoTaskResponse;
 use RunApi\Veo31\Models\VideoTaskResponse;
-use RunApi\Veo31\Types;
 
 /**
  * Increases the resolution of a previously generated video to 1080p or 4K. Requires the source_task_id of a completed TextToVideo or ExtendVideo task.
@@ -67,10 +66,8 @@ readonly class UpscaleVideo extends TypedConfiguredResource
         return new self(
             $http,
             '/api/v1/veo_3_1/upscale_video',
-            'veo-3-1/upscale-video',
             VideoTaskResponse::class,
             CompletedVideoTaskResponse::class,
-            Types::UPSCALE_VIDEO_MODELS,
             'upscale-video',
             VideoTaskResponse::class,
             CompletedVideoTaskResponse::class,

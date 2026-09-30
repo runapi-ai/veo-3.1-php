@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace RunApi\Veo31\Resources;
 
-use RunApi\Core\Contract\ContractGen;
 use RunApi\Core\Http\HttpClient;
 use RunApi\Core\Models\TaskCreateResponse;
 use RunApi\Core\RequestOptions;
@@ -79,10 +78,8 @@ readonly class TextToVideo extends TypedConfiguredResource
         return new self(
             $http,
             '/api/v1/veo_3_1/text_to_video',
-            'veo-3-1/text-to-video',
             VideoTaskResponse::class,
             CompletedVideoTaskResponse::class,
-            ContractGen::contract()['veo-3-1/text-to-video']['models'],
             'text-to-video',
             VideoTaskResponse::class,
             CompletedVideoTaskResponse::class,

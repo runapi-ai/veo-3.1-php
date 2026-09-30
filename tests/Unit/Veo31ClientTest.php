@@ -29,8 +29,7 @@ final class Veo31ClientTest extends TestCase
     public function testCreatePostsCompactedBodyToCorrectPath(): void
     {
         $transport = new QueueHttpClient([
-            new Response(200, [], '{"id":"task_1"}'),
-        ]);
+            new Response(200, [], '{"id":"task_1"}')]);
         $client = new Veo31Client(new ClientOptions(apiKey: 'k', httpClient: $transport, maxRetries: 0));
 
         $task = $client->textToVideo->create([
@@ -43,8 +42,7 @@ final class Veo31ClientTest extends TestCase
             'prompt' => 'A product render',
             'reference_image_urls' => ['https://cdn.runapi.ai/public/samples/image.jpg'],
             'callback_url' => '',
-            'seed' => null,
-        ]);
+            'seed' => null]);
 
         $body = json_decode((string) $transport->requests[0]->getBody(), true, flags: JSON_THROW_ON_ERROR);
 
@@ -55,26 +53,12 @@ final class Veo31ClientTest extends TestCase
         self::assertArrayNotHasKey('seed', $body);
     }
 
-    public function testCreateRejectsEmptyReferenceImagesBeforeSendingRequest(): void
-    {
-        $client = new Veo31Client(new ClientOptions(apiKey: 'k', httpClient: new QueueHttpClient([]), maxRetries: 0));
 
-        $this->expectException(ValidationException::class);
-        $this->expectExceptionMessage('reference_image_urls must contain between 1 and 3 items');
-
-        $client->textToVideo->create([
-            'model' => 'veo-3.1',
-            'input_mode' => 'reference',
-            'prompt' => 'A product render',
-            'reference_image_urls' => [],
-        ]);
-    }
 
     public function testCreateAcceptsLiteReferenceRequest(): void
     {
         $transport = new QueueHttpClient([
-            new Response(200, [], '{"id":"task_lite"}'),
-        ]);
+            new Response(200, [], '{"id":"task_lite"}')]);
         $client = new Veo31Client(new ClientOptions(apiKey: 'k', httpClient: $transport, maxRetries: 0));
 
         $client->textToVideo->create([
@@ -83,36 +67,19 @@ final class Veo31ClientTest extends TestCase
             'input_mode' => 'reference',
             'aspect_ratio' => '16:9',
             'duration_seconds' => 8,
-            'reference_image_urls' => ['https://cdn.runapi.ai/public/samples/image.jpg'],
-        ]);
+            'reference_image_urls' => ['https://cdn.runapi.ai/public/samples/image.jpg']]);
 
         $body = json_decode((string) $transport->requests[0]->getBody(), true, flags: JSON_THROW_ON_ERROR);
         self::assertSame('veo-3.1-lite', $body['model']);
     }
 
-    public function testCreateRejectsFourSecondLiteReferenceBeforeSendingRequest(): void
-    {
-        $client = new Veo31Client(new ClientOptions(apiKey: 'k', httpClient: new QueueHttpClient([]), maxRetries: 0));
 
-        $this->expectException(ValidationException::class);
-        $this->expectExceptionMessage('duration_seconds');
-
-        $client->textToVideo->create([
-            'model' => 'veo-3.1-lite',
-            'prompt' => 'Keep the subject and composition',
-            'input_mode' => 'reference',
-            'aspect_ratio' => '16:9',
-            'duration_seconds' => 4,
-            'reference_image_urls' => ['https://cdn.runapi.ai/public/samples/image.jpg'],
-        ]);
-    }
 
     public function testRunReturnsTypedCompletedResponseAndPreservesUnknownFields(): void
     {
         $transport = new QueueHttpClient([
             new Response(200, [], '{"id":"task_1"}'),
-            new Response(200, [], '{"id":"task_1","status":"completed","videos":[{"url":"https://file.runapi.ai/result"}],"extra_field":"kept"}'),
-        ]);
+            new Response(200, [], '{"id":"task_1","status":"completed","videos":[{"url":"https://file.runapi.ai/result"}],"extra_field":"kept","usage":{"cost":0.05}}')]);
         $client = new Veo31Client(new ClientOptions(apiKey: 'k', httpClient: $transport, maxRetries: 0));
 
         $result = $client->textToVideo->run([
@@ -123,8 +90,7 @@ final class Veo31ClientTest extends TestCase
             'input_mode' => 'text',
             'last_frame_image_url' => 'https://cdn.runapi.ai/public/samples/image.jpg',
             'prompt' => 'A product render',
-            'reference_image_urls' => ['https://cdn.runapi.ai/public/samples/image.jpg'],
-        ]);
+            'reference_image_urls' => ['https://cdn.runapi.ai/public/samples/image.jpg']]);
 
         self::assertInstanceOf(CompletedVideoTaskResponse::class, $result);
         self::assertSame('https://file.runapi.ai/result', $result->videos[0]->url);
@@ -136,8 +102,7 @@ final class Veo31ClientTest extends TestCase
     {
         $transport = new QueueHttpClient([
             new Response(200, [], '{"id":"task_1"}'),
-            new Response(200, [], '{"id":"task_1","status":"completed"}'),
-        ]);
+            new Response(200, [], '{"id":"task_1","status":"completed","usage":{"cost":0.05}}')]);
         $client = new Veo31Client(new ClientOptions(apiKey: 'k', httpClient: $transport, maxRetries: 0));
 
         $this->expectException(ValidationException::class);
@@ -151,40 +116,20 @@ final class Veo31ClientTest extends TestCase
             'input_mode' => 'text',
             'last_frame_image_url' => 'https://cdn.runapi.ai/public/samples/image.jpg',
             'prompt' => 'A product render',
-            'reference_image_urls' => ['https://cdn.runapi.ai/public/samples/image.jpg'],
-        ]);
+            'reference_image_urls' => ['https://cdn.runapi.ai/public/samples/image.jpg']]);
     }
 
-    public function testRejectsInvalidContractEnum(): void
-    {
-        $client = new Veo31Client(new ClientOptions(apiKey: 'k', httpClient: new QueueHttpClient([]), maxRetries: 0));
 
-        $this->expectException(ValidationException::class);
-        $this->expectExceptionMessage('input_mode must be one of the allowed values');
-
-        $client->textToVideo->create([
-        'model' => 'veo-3.1',
-        'aspect_ratio' => '16:9',
-        'duration_seconds' => 4,
-        'first_frame_image_url' => 'https://cdn.runapi.ai/public/samples/image.jpg',
-        'last_frame_image_url' => 'https://cdn.runapi.ai/public/samples/image.jpg',
-        'prompt' => 'A product render',
-        'reference_image_urls' => ['https://cdn.runapi.ai/public/samples/image.jpg'],
-        'input_mode' => 'not-valid',
-        ]);
-    }
 
     public function testSecondaryResourceUsesItsOwnPath(): void
     {
         $transport = new QueueHttpClient([
-            new Response(200, [], '{"id":"task_2"}'),
-        ]);
+            new Response(200, [], '{"id":"task_2"}')]);
         $client = new Veo31Client(new ClientOptions(apiKey: 'k', httpClient: $transport, maxRetries: 0));
 
         $client->extendVideo->create([
             'prompt' => 'A product render',
-            'source_task_id' => 'task_source',
-        ]);
+            'source_task_id' => 'task_source']);
 
         self::assertSame('/api/v1/veo_3_1/extend_video', $transport->requests[0]->getUri()->getPath());
     }
